@@ -9,8 +9,8 @@ export class RedisService {
    * @param param0
    * 设置字符串键值对
    */
-  public async set({ key, value, options }) {
-    await this.redis.set(key, value, options);
+  public async set(key, value, type, secoend) {
+    await this.redis.set(key, value, type, secoend);
   }
 
   /**

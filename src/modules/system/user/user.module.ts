@@ -11,12 +11,13 @@ import { SysUserEntity } from './entities/user.entity';
   imports: [TypeOrmModule.forFeature([SysUserEntity])],
   providers: [
     UserService,
+    SysUserRepositoryService,
     {
       provide: HashingProvider,
       useClass: BcryptProvider,
     },
-    SysUserRepositoryService,
   ],
   controllers: [UserController],
+  exports: [UserService, SysUserRepositoryService, HashingProvider],
 })
 export class UserModule {}

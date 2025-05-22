@@ -5,9 +5,17 @@ import { EnvConfigModule } from './shared/env-config/env-config.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { LoggerService } from './shared/logger/logger.service';
 import { SystemModule } from './modules/system/system.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { RedisModule } from './shared/redis/redis.module';
 
 @Module({
-  imports: [EnvConfigModule, DatabaseModule, SystemModule],
+  imports: [
+    EnvConfigModule,
+    DatabaseModule,
+    SystemModule,
+    AuthModule,
+    RedisModule,
+  ],
   controllers: [AppController],
   providers: [AppService, LoggerService],
   exports: [LoggerService],

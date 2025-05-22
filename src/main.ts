@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { TransformDataInterceptor } from './common/interceptors/transform-data.interceptor';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +15,24 @@ async function bootstrap() {
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory);
+  app.useGlobalInterceptors(new TransformDataInterceptor());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // 自动移除多余字段
+      forbidNonWhitelisted: true, // 拒绝非 DTO 声明字段
+      transform: true, // 自动转类型
+      exceptionFactory: (errors) => {
+        const messages = errors.flatMap((err) =>
+          Object.values(err.constraints || {}),
+        );
+        return new BadRequestException({
+          code: 400,
+          message: messages[0] || '参数校验失败',
+          data: null,
+        });
+      },
+    }),
+  );
 
   await app.listen(process.env.PORT ?? 3000);
 }

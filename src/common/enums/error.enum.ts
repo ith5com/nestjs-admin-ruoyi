@@ -1,0 +1,17 @@
+export enum ErrorEnum {
+  DEFAULT = '0:未知错误',
+  SERVER_ERROR = '500:服务繁忙，请稍后再试',
+
+  SYSTEM_USER_EXISTS = '1001:系统用户已存在',
+  SYSTEM_USER_PASSWORD_ERROR = '1002:账号名或密码错误',
+  SYSTEM_USER_EMTERY = '1003:用户不存在',
+  SYSTEM_USER_ADMIN_DELETE = '1004:管理员不能删除',
+
+  SYSTEM_MENU_NOT_FOUND = '2001:菜单不存在',
+  SYSTEM_MENU_EXISTS = '2002:菜单已存在',
+
+  SYSTEM_ROLE_NOT_FOUND = '3001:角色不存在',
+
+  SYSTEM_DEPT_NOT_FOUND = '4001:部门不存在',
+  SYSTEM_DEPT_EXISTS = '4002:部门已存在',
+}

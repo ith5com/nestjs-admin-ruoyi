@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from '../dto/login.dto';
 import { SysUserRepositoryService } from 'src/modules/system/user/services/user-repository.service';
 import { ErrorEnum } from 'src/common/enums/error.enum';
@@ -6,6 +6,7 @@ import { HashingProvider } from 'src/modules/system/user/services/hashing.provid
 import { RedisService } from 'src/shared/redis/redis.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
     const user =
       await this.sysUserRepositoryService.findUserByUsername(username);
     if (!user) {
-      throw new Error(ErrorEnum.SYSTEM_USER_EXISTS);
+      throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_EXISTS);
     }
     const cachePassword = user.password;
     // 校验密码
@@ -35,12 +36,29 @@ export class AuthService {
       username: user.username,
     };
 
-    const token = await this.jwtService.signAsync(payload, {
+    const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('jwt.system_secret'),
-      expiresIn: '1h',
+      expiresIn: '15m',
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: 'refresh-secret',
+      expiresIn: '7d',
     });
     // 存储到redis中，后面做挤兑下线功能
-    await this.redisService.set(`user_${user.id}`, token, 'EX', 1000);
+    await this.redisService.set(
+      `accessToken:user_${user.id}`,
+      accessToken,
+      'EX',
+      60 * 15,
+    );
+    // 存储到redis中，后面做挤兑下线功能
+    await this.redisService.set(
+      `refreshToken:user_${user.id}`,
+      accessToken,
+      'EX',
+      60 * 60 * 24 * 7,
+    );
     return {
       user: {
         id: user.id,
@@ -48,7 +66,43 @@ export class AuthService {
         phone: user.phone,
         status: user.status,
       },
-      accessToken: token,
+      accessToken: accessToken,
+      refreshToken,
     };
+  }
+
+  public async refreshToken(data: { refreshToken: string }) {
+    let payload = {} as any;
+    try {
+      payload = await this.jwtService.verifyAsync(data.refreshToken, {
+        secret: this.configService.get('jwt.system_secret'),
+      });
+    } catch (error) {
+      console.log(error);
+      throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_UNAUTHORIZED);
+    }
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get('jwt.system_secret'),
+      expiresIn: '15m',
+    });
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: 'refresh-secret',
+      expiresIn: '7d',
+    });
+    // 存储到redis中，后面做挤兑下线功能
+    await this.redisService.set(
+      `accessToken:user_${payload.sub}`,
+      accessToken,
+      'EX',
+      60 * 15,
+    );
+    // 存储到redis中，后面做挤兑下线功能
+    await this.redisService.set(
+      `refreshToken:user_${payload.sub}`,
+      accessToken,
+      'EX',
+      60 * 60 * 24 * 7,
+    );
+    return { accessToken, refreshToken };
   }
 }

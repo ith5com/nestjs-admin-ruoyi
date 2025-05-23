@@ -3,6 +3,7 @@ import { CreateUserDto } from '../dto/user.dto';
 import { HashingProvider } from './hashing.provider';
 import { SysUserRepositoryService } from './user-repository.service';
 import { ErrorEnum } from 'src/common/enums/error.enum';
+import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
 
 @Injectable()
 export class UserService {
@@ -22,7 +23,7 @@ export class UserService {
       await this.sysUserRepositoryService.findUserByUsername(username);
 
     if (exists) {
-      throw new Error(ErrorEnum.SYSTEM_USER_EXISTS);
+      throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_EXISTS);
     }
 
     const newPassword = await this.hashingProvider.generatePassword(password);

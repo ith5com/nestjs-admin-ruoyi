@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { TransformDataInterceptor } from './common/interceptors/transform-data.interceptor';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './common/exceptions/http-exception-filter.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,7 @@ async function bootstrap() {
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory);
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new TransformDataInterceptor());
   app.useGlobalPipes(
     new ValidationPipe({

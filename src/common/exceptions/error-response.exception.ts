@@ -6,6 +6,8 @@ import { ErrorEnum } from 'src/common/enums/error.enum';
  * @description：自定义响应异常
  */
 export class ErrorResponseException extends HttpException {
+  private errorCode: number;
+
   constructor(error: ErrorEnum | string) {
     const [code, message] = error.split(':');
     if (error.split(':').length === 2) {
@@ -16,16 +18,21 @@ export class ErrorResponseException extends HttpException {
         },
         HttpStatus.OK,
       );
+      this.errorCode = HttpStatus.OK;
       return;
     }
 
     super(
       {
-        code: HttpStatus.INTERNAL_SERVER_ERROR,
+        code: HttpStatus.OK,
         message: error,
         timestamp: new Date().getTime(),
       },
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      HttpStatus.OK,
     );
+    this.errorCode = HttpStatus.OK;
+  }
+  getErrorCode(): number {
+    return this.errorCode;
   }
 }

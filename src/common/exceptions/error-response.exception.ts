@@ -16,21 +16,21 @@ export class ErrorResponseException extends HttpException {
           code: Number(code),
           message: message,
         },
-        HttpStatus.OK,
+        200,
       );
-      this.errorCode = HttpStatus.OK;
+      this.errorCode = Number(code);
       return;
     }
 
     super(
       {
-        code: HttpStatus.OK,
+        code: 200,
         message: error,
         timestamp: new Date().getTime(),
       },
-      HttpStatus.OK,
+      200,
     );
-    this.errorCode = HttpStatus.OK;
+    this.errorCode = 200;
   }
   getErrorCode(): number {
     return this.errorCode;

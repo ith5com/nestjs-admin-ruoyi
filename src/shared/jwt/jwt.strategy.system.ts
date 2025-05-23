@@ -24,8 +24,13 @@ export class SystemJwtStrategy extends PassportStrategy(
   }
 
   async validate(req: Request, payload: { sub: number }) {
-    const cachedToken = await this.redisService.get(`token:${payload.sub}`);
+    console.log('payload', payload);
+    const cachedToken = await this.redisService.get(
+      `accessToken:user_${payload.sub}`,
+    );
     const token = req.headers.authorization?.replace('Bearer ', '');
+    console.log('cachedToken', cachedToken);
+    console.log('token', token);
     if (cachedToken !== token) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_IN_OTHER_LOGIN);
     }

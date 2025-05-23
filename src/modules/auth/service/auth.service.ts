@@ -21,7 +21,7 @@ export class AuthService {
     const user =
       await this.sysUserRepositoryService.findUserByUsername(username);
     if (!user) {
-      throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_EXISTS);
+      throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_PASSWORD_ERROR);
     }
     const cachePassword = user.password;
     // 校验密码

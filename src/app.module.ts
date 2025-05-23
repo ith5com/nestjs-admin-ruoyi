@@ -7,6 +7,7 @@ import { LoggerService } from './shared/logger/logger.service';
 import { SystemModule } from './modules/system/system.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RedisModule } from './shared/redis/redis.module';
+import { JwtAuthModule } from './shared/jwt/jwt.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { RedisModule } from './shared/redis/redis.module';
     SystemModule,
     AuthModule,
     RedisModule,
+    JwtAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, LoggerService],

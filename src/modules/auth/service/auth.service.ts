@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { LoginDto } from '../dto/login.dto';
 import { SysUserRepositoryService } from 'src/modules/system/user/services/user-repository.service';
 import { ErrorEnum } from 'src/common/enums/error.enum';

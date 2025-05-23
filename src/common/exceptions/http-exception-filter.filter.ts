@@ -3,7 +3,6 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ErrorResponseException } from './error-response.exception';
@@ -14,10 +13,8 @@ import { ErrorEnum } from '../enums/error.enum';
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    // const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
 
-    // const url = request.url;
     const status = exception.getStatus();
     let message = exception.message;
     if (status === 500 && !(exception instanceof ErrorResponseException)) {

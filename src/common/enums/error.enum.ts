@@ -1,7 +1,7 @@
 export enum ErrorEnum {
   DEFAULT = '0:未知错误',
   SERVER_ERROR = '500:服务繁忙，请稍后再试',
-
+  SYSTEM_IN_OTHER_LOGIN = '300:当前账号已在其他设备登录',
   SYSTEM_USER_EXISTS = '1001:系统用户已存在',
   SYSTEM_USER_PASSWORD_ERROR = '1002:账号名或密码错误',
   SYSTEM_USER_EMTERY = '1003:用户不存在',

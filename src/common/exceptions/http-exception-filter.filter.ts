@@ -22,11 +22,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
       if (!(process.env.NODE_ENV === 'development'))
         message = ErrorEnum.SERVER_ERROR?.split(':')[1];
     }
+
     const apiErrorCode =
       exception instanceof ErrorResponseException
         ? exception.getErrorCode()
         : status;
-
+    console.log(exception instanceof ErrorResponseException);
+    console.log('apiErrorCode', apiErrorCode);
+    console.log('status', status);
     // 返回基础响应结果
     const resBody = {
       code: apiErrorCode,

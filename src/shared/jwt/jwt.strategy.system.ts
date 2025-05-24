@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -22,15 +22,22 @@ export class SystemJwtStrategy extends PassportStrategy(
       passReqToCallback: true,
     });
   }
-
+  handleRequest(err: any, user: any) {
+    if (err || !user) {
+      // 这里改为你自定义的异常，code 自定义（如 10001 表示 token 失效）
+      throw new ErrorResponseException('10001:登录状态已过期，请重新登录');
+    }
+    return user;
+  }
   async validate(req: Request, payload: { sub: number }) {
-    console.log('payload', payload);
     const cachedToken = await this.redisService.get(
       `accessToken:user_${payload.sub}`,
     );
     const token = req.headers.authorization?.replace('Bearer ', '');
-    console.log('cachedToken', cachedToken);
-    console.log('token', token);
+
+    if (!cachedToken) {
+      throw new ErrorResponseException(ErrorEnum.ACCESS_TOKEN_EXPIRED);
+    }
     if (cachedToken !== token) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_IN_OTHER_LOGIN);
     }

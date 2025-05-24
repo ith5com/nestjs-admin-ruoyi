@@ -2,7 +2,6 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './service/auth.service';
-import { ErrorEnum } from 'src/common/enums/error.enum';
 
 @ApiTags('登录模块')
 @Controller('auth')

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 import { SysMenuEntity } from '../entities/menu.entity';
-import { SysMenuDto } from '../dto/menu.dto';
+import { MenuQueryDto, SysMenuDto } from '../dto/menu.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
 import { ErrorEnum } from 'src/common/enums/error.enum';
@@ -58,15 +58,10 @@ export class SysMenuRepositoryService {
    * @param name 菜单名称
    * @returns 菜单列表
    */
-  public async getMenuList(
-    page: number,
-    pageSize: number,
-    sysMenuDto: SysMenuDto,
-  ) {
+  public async getMenuList(sysMenuDto: MenuQueryDto) {
+    const { name, page = 1, pageSize = 10 } = sysMenuDto;
     const queryBuilder = this.sysMenuRepository.createQueryBuilder('menu');
-    console.log(page);
-    console.log(page - 1);
-    const { name } = sysMenuDto;
+
     if (name) {
       queryBuilder.andWhere('menu.name LIKE :name', { name: `%${name}%` });
     }

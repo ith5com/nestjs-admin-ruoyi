@@ -68,3 +68,15 @@ export class SysMenuDto {
 }
 
 export class MenuUpdateDto extends PartialType(SysMenuDto) {}
+
+export class MenuQueryDto extends PartialType(SysMenuDto) {
+  @ApiProperty({ description: '页码', required: false, default: 1 })
+
+  @IsOptional()
+  page?: number = 1;
+
+  @ApiProperty({ description: '每页条数', required: false, default: 10 })
+ 
+  @IsOptional()
+  pageSize?: number = 10;
+}

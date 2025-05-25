@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SysMenuDto } from '../dto/menu.dto';
+import { MenuQueryDto, SysMenuDto } from '../dto/menu.dto';
 import { SysMenuRepositoryService } from './sys-menu.repository.service';
 
 @Injectable()
@@ -43,13 +43,11 @@ export class MenuService {
    * @returns 菜单列表
    */
   public async getMenuList(
-    page: number,
-    pageSize: number,
-    sysMenuDto: SysMenuDto,
+   
+    sysMenuDto: MenuQueryDto,
   ) {
     return await this.sysMenuRepositoryService.getMenuList(
-      page,
-      pageSize,
+    
       sysMenuDto,
     );
   }

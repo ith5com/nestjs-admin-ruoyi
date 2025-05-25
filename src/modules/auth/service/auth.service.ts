@@ -38,7 +38,7 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('jwt.system_secret'),
-      expiresIn: '1m',
+      expiresIn: '15m',
     });
 
     const refreshToken = this.jwtService.sign(payload, {
@@ -83,7 +83,7 @@ export class AuthService {
     }
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('jwt.system_secret'),
-      expiresIn: '1m',
+      expiresIn: '15m',
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: 'refresh-secret',
@@ -99,7 +99,7 @@ export class AuthService {
     // 存储到redis中，后面做挤兑下线功能
     await this.redisService.set(
       `refreshToken:user_${payload.sub}`,
-      accessToken,
+      refreshToken,
       'EX',
       60 * 60 * 24 * 7,
     );

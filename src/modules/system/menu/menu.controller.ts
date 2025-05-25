@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { MenuService } from './services/menu.service';
-import { SysMenuDto } from './dto/menu.dto';
+import { MenuQueryDto, SysMenuDto } from './dto/menu.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtSystemGuardGuard } from 'src/common/guards/auth/jwt-system-auth.guard';
 import { Permission } from 'src/common/decorators/permission.decorator';
@@ -44,13 +44,11 @@ export class MenuController {
   @ApiOperation({ summary: '获取菜单列表' })
   @Get()
   async getMenuList(
-    @Query('page') page: string,
-    @Query('pageSize') pageSize: string,
-    @Query() sysMenuDto: SysMenuDto,
+    @Query() sysMenuDto: MenuQueryDto,
   ) {
+  
     return await this.menuService.getMenuList(
-      Number(page),
-      Number(pageSize),
+   
       sysMenuDto,
     );
   }

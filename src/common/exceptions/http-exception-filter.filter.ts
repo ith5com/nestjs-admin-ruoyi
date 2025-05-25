@@ -3,6 +3,7 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ErrorResponseException } from './error-response.exception';
@@ -17,26 +18,31 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const status = exception.getStatus();
     let message = exception.message;
-    if (status === 500 && !(exception instanceof ErrorResponseException)) {
+    let code = status;
+
+    // 处理自定义异常
+    if (exception instanceof ErrorResponseException) {
+      code = exception.getErrorCode();
+      message = exception.message;
+    }
+    // 处理 401 未授权错误
+    else if (exception instanceof UnauthorizedException) {
+      code = 401;
+      message = ErrorEnum.ACCESS_TOKEN_EXPIRED.split(':')[1];
+    }
+    // 处理其他错误
+    else if (status === 500 && !(exception instanceof ErrorResponseException)) {
       // 生产环境下隐藏错误信息
       if (!(process.env.NODE_ENV === 'development'))
         message = ErrorEnum.SERVER_ERROR?.split(':')[1];
     }
 
-    const apiErrorCode =
-      exception instanceof ErrorResponseException
-        ? exception.getErrorCode()
-        : status;
-    console.log(exception instanceof ErrorResponseException);
-    console.log('apiErrorCode', apiErrorCode);
-    console.log('status', status);
-    // 返回基础响应结果
     const resBody = {
-      code: apiErrorCode,
+      code,
       message,
       data: null,
     };
 
-    response.status(status).send(resBody);
+    response.status(200).send(resBody);
   }
 }

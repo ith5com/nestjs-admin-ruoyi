@@ -22,13 +22,7 @@ export class SystemJwtStrategy extends PassportStrategy(
       passReqToCallback: true,
     });
   }
-  handleRequest(err: any, user: any) {
-    if (err || !user) {
-      // 这里改为你自定义的异常，code 自定义（如 10001 表示 token 失效）
-      throw new ErrorResponseException('10001:登录状态已过期，请重新登录');
-    }
-    return user;
-  }
+
   async validate(req: Request, payload: { sub: number }) {
     const cachedToken = await this.redisService.get(
       `accessToken:user_${payload.sub}`,

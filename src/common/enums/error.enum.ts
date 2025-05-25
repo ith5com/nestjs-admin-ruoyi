@@ -3,6 +3,7 @@ export enum ErrorEnum {
   SERVER_ERROR = '500:服务繁忙，请稍后再试',
   SYSTEM_IN_OTHER_LOGIN = '300:当前账号已在其他设备登录',
   ACCESS_TOKEN_EXPIRED = '401:token 已过期，请刷新 token',
+  REFRESH_TOKEN_EXPIRED = '402:刷新token已过期，请重新登录',
   SYSTEM_USER_EXISTS = '1001:系统用户已存在',
   SYSTEM_USER_PASSWORD_ERROR = '1002:账号名或密码错误',
   SYSTEM_USER_EMTERY = '1003:用户不存在',

@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Injectable, forwardRef, Inject } from '@nestjs/common';
+import { Repository, In } from 'typeorm';
 import { SysRoleEntity } from '../entities/role.entity';
 import { CreateRoleDto, DeleteRoleDto } from '../dto/role.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,12 +13,25 @@ export class RoleRepositoryService {
     @InjectRepository(SysRoleEntity)
     private readonly roleRepository: Repository<SysRoleEntity>,
 
+    @Inject(forwardRef(() => SysUserRepositoryService))
     private readonly sysUserRepositoryService: SysUserRepositoryService,
   ) {}
 
   create(createRoleDto: CreateRoleDto) {
     const role = this.roleRepository.create(createRoleDto);
     return this.roleRepository.save(role);
+  }
+
+  /**
+   * @param roleIds 角色id列表
+   * @returns 角色信息列表
+   * @description 根据角色id列表，查询角色信息
+   */
+  async findRolesByIds(roleIds: number[]): Promise<SysRoleEntity[]> {
+    return await this.roleRepository
+      .createQueryBuilder('role')
+      .where('role.id IN (:...roleIds)', { roleIds })
+      .getMany();
   }
 
   async delete({ id }: DeleteRoleDto) {

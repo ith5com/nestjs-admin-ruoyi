@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserService } from './services/user.service';
 import { UserController } from './user.controller';
 import { BcryptProvider } from './services/bcrypt.provider';
@@ -6,9 +6,13 @@ import { SysUserRepositoryService } from './services/user-repository.service';
 import { HashingProvider } from './services/hashing.provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SysUserEntity } from './entities/user.entity';
+import { RoleModule } from '../role/role.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SysUserEntity])],
+  imports: [
+    TypeOrmModule.forFeature([SysUserEntity]),
+    forwardRef(() => RoleModule),
+  ],
   providers: [
     UserService,
     SysUserRepositoryService,

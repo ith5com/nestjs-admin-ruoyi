@@ -15,7 +15,7 @@ export class SysUserEntity extends BaseEntity {
   })
   username: string;
 
-  @Column({ name: 'password', type: 'varchar', comment: '密码' })
+  @Column({ name: 'password', select:false, type: 'varchar', comment: '密码' })
   password: string;
 
   @Column({

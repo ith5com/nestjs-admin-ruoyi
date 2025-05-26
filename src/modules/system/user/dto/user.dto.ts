@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
   IsIn,
+  IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
   IsString,
@@ -23,7 +24,6 @@ export class UserDto {
   })
   password: string;
 
-  @IsPhoneNumber()
   @IsOptional()
   phone: string;
 
@@ -32,4 +32,45 @@ export class UserDto {
   status?: number;
 }
 
-export class CreateUserDto extends UserDto {}
+export class CreateUserDto extends UserDto {
+  @IsOptional()
+  roles: number[]|null;
+}
+
+
+export class UpdateUserDto  {
+  @IsString()
+  @Matches(/^[\s\S]+$/)
+  @MinLength(4)
+  @MaxLength(10)
+  username: string;
+
+  @IsOptional()
+  phone: string;
+
+  @IsIn([0, 1])
+  @IsOptional()
+  status?: number;
+
+  @IsNotEmpty()
+  roles: number[]|null;
+}
+
+export class GetUserListDto {
+
+  @IsOptional()
+  username: string;
+
+  @IsOptional()
+  phone: string;
+
+  @IsIn([0, 1])
+  @IsOptional()
+  status?: number;
+
+  @IsOptional()
+  page: number;
+
+  @IsOptional()
+  pageSize: number;
+}

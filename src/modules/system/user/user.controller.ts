@@ -1,7 +1,7 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './services/user.service';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, GetUserListDto, UpdateUserDto } from './dto/user.dto';
 import { JwtSystemGuardGuard } from 'src/common/guards/auth/jwt-system-auth.guard';
 
 @ApiTags('系统用户')
@@ -13,5 +13,46 @@ export class UserController {
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto) {
     return await this.userService.createUser(createUserDto);
+  }
+
+  /**
+   * 更新用户信息
+   * @param id 用户id
+   * @param updateUserDto 更新用户信息
+   * @returns 更新后的用户信息
+   */
+  @Put(':id')
+  async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    console.log('updateUserDto', updateUserDto);
+    return await this.userService.updateUser(id, updateUserDto);
+  }
+
+  /**
+   * 删除用户
+   * @param id 用户id
+   * @returns 删除后的用户信息
+   */
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string) {
+    return await this.userService.deleteUser(id);
+  }
+
+  /**
+   * 获取用户详情
+   * @param id 用户id
+   * @returns 用户详情
+   */
+  @Get(':id')
+  async getUserDetail(@Param('id') id: string) {
+    return await this.userService.getUserDetail(id);
+  }
+
+  /**
+   * 获取用户列表
+   * @returns 用户列表
+   */
+  @Get()
+  async getUserList(@Query() query: GetUserListDto) {
+    return await this.userService.getUserList(query);
   }
 }

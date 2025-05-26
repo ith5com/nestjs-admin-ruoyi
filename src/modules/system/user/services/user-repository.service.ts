@@ -16,7 +16,7 @@ export class SysUserRepositoryService {
 
     private readonly roleRepositoryService: RoleRepositoryService,
 
-    private readonly deptRepositoryService: DeptRepositoryService
+    private readonly deptRepositoryService: DeptRepositoryService,
   ) {}
 
   public async createUser({
@@ -24,7 +24,7 @@ export class SysUserRepositoryService {
     password,
     phone,
     roles = [],
-    deptId
+    deptId,
   }: CreateUserDto) {
     // 1. 创建用户基本信息
     const user = this.sysUserRepository.create({
@@ -35,11 +35,12 @@ export class SysUserRepositoryService {
 
     // 2. 如果有角色，则关联角色
     if (roles && roles.length > 0) {
-      const roleEntities = await this.roleRepositoryService.findRolesByIds(roles);
+      const roleEntities =
+        await this.roleRepositoryService.findRolesByIds(roles);
       user.roles = roleEntities;
     }
 
-    if(deptId){
+    if (deptId) {
       const dept = await this.deptRepositoryService.findDeptById(deptId);
       if (!dept) {
         throw new ErrorResponseException(ErrorEnum.SYSTEM_DEPT_NOT_FOUND);
@@ -59,10 +60,10 @@ export class SysUserRepositoryService {
    */
   public async findUserByUsername(username: string) {
     return await this.sysUserRepository
-    .createQueryBuilder('user')
-    .where('user.username = :username', { username })
-    .addSelect('user.password')
-    .getOne();
+      .createQueryBuilder('user')
+      .where('user.username = :username', { username })
+      .addSelect('user.password')
+      .getOne();
   }
 
   public async getUsersByRoleId(roleId: number): Promise<SysUserEntity[]> {
@@ -93,13 +94,14 @@ export class SysUserRepositoryService {
 
     // 2. 如果有角色，则关联角色
     if (roles && roles.length > 0) {
-      const roleEntities = await this.roleRepositoryService.findRolesByIds(roles);
+      const roleEntities =
+        await this.roleRepositoryService.findRolesByIds(roles);
       user.roles = roleEntities;
-    }else{
+    } else {
       user.roles = [];
     }
 
-    if(deptId){
+    if (deptId) {
       const dept = await this.deptRepositoryService.findDeptById(deptId);
       if (!dept) {
         throw new ErrorResponseException(ErrorEnum.SYSTEM_DEPT_NOT_FOUND);
@@ -122,7 +124,7 @@ export class SysUserRepositoryService {
     if (!user) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_NOT_FOUND);
     }
-    await this.sysUserRepository.delete(id) 
+    await this.sysUserRepository.delete(id);
   }
 
   /**
@@ -132,11 +134,11 @@ export class SysUserRepositoryService {
    */
   public async getUserDetail(id: string) {
     return await this.sysUserRepository
-    .createQueryBuilder('user')
-    .leftJoinAndSelect('user.roles', 'roles')
-    .leftJoinAndSelect('user.dept', 'dept')
-    .where('user.id = :id', { id: Number(id) })
-    .getOne();
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.roles', 'roles')
+      .leftJoinAndSelect('user.dept', 'dept')
+      .where('user.id = :id', { id: Number(id) })
+      .getOne();
   }
 
   /**
@@ -158,18 +160,18 @@ export class SysUserRepositoryService {
       where['user.status'] = status;
     }
     const [list, total] = await this.sysUserRepository
-    .createQueryBuilder('user')
-    .leftJoinAndSelect('user.roles', 'roles')
-    .leftJoinAndSelect('user.dept', 'dept')
-    .where(where)
-    .skip(skip)
-    .take(take)
-    .getManyAndCount();
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.roles', 'roles')
+      .leftJoinAndSelect('user.dept', 'dept')
+      .where(where)
+      .skip(skip)
+      .take(take)
+      .getManyAndCount();
     return {
       list,
       total,
       page,
-      pageSize
+      pageSize,
     };
   }
 }

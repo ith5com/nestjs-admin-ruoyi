@@ -42,13 +42,7 @@ export class MenuService {
    * @param sysMenuDto 菜单信息
    * @returns 菜单列表
    */
-  public async getMenuList(
-   
-    sysMenuDto: MenuQueryDto,
-  ) {
-    return await this.sysMenuRepositoryService.getMenuList(
-    
-      sysMenuDto,
-    );
+  public async getMenuList(sysMenuDto: MenuQueryDto) {
+    return await this.sysMenuRepositoryService.getMenuList(sysMenuDto);
   }
 }

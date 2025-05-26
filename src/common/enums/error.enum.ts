@@ -19,6 +19,5 @@ export enum ErrorEnum {
   SYSTEM_ROLE_HAS_USERS = '3003:角色存在关联用户，不能删除',
 
   SYSTEM_DEPT_NOT_FOUND = '4001:部门不存在',
-
   SYSTEM_DEPT_EXISTS = '4002:部门已存在',
 }

@@ -35,6 +35,10 @@ export class UserDto {
 export class CreateUserDto extends UserDto {
   @IsOptional()
   roles: number[]|null;
+
+
+  @IsOptional()
+  deptId: number;
 }
 
 
@@ -54,6 +58,9 @@ export class UpdateUserDto  {
 
   @IsNotEmpty()
   roles: number[]|null;
+
+  @IsOptional()
+  deptId: number;
 }
 
 export class GetUserListDto {

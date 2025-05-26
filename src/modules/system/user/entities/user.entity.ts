@@ -1,8 +1,9 @@
 import { Exclude } from 'class-transformer';
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { StatusEnum } from 'src/common/enums/common.enum';
-import { Column, Entity, JoinTable, ManyToMany, Relation } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, Relation } from 'typeorm';
 import { SysRoleEntity } from '../../role/entities/role.entity';
+import { DeptEntity } from '../../dept/entities/dept.entity';
 
 @Entity({ name: 'sys_users' })
 export class SysUserEntity extends BaseEntity {
@@ -37,4 +38,9 @@ export class SysUserEntity extends BaseEntity {
     inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
   })
   roles: Relation<SysRoleEntity[]>;
+
+  @ManyToOne(()=>DeptEntity,dept=>dept.users)
+  @JoinColumn({name:'dept_id'})
+  dept: Relation<DeptEntity>;
+
 }

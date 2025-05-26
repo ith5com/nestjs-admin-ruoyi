@@ -7,11 +7,13 @@ import { HashingProvider } from './services/hashing.provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SysUserEntity } from './entities/user.entity';
 import { RoleModule } from '../role/role.module';
+import { DeptModule } from '../dept/dept.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([SysUserEntity]),
     forwardRef(() => RoleModule),
+    forwardRef(() => DeptModule),
   ],
   providers: [
     UserService,

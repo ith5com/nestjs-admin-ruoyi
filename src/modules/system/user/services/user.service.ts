@@ -22,6 +22,7 @@ export class UserService {
     password,
     phone,
     roles = [],
+    deptId
   }: CreateUserDto) {
     // 判断是否存在用户
     const exists =
@@ -38,6 +39,7 @@ export class UserService {
       phone,
       password: newPassword,
       roles: roles,
+      deptId: deptId,
     };
     const user = await this.sysUserRepositoryService.createUser(createUserBody);
 

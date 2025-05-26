@@ -6,6 +6,7 @@ import { CreateUserDto, GetUserListDto, UpdateUserDto } from '../dto/user.dto';
 import { RoleRepositoryService } from '../../role/services/role-repository.service';
 import { ErrorEnum } from 'src/common/enums/error.enum';
 import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
+import { DeptRepositoryService } from '../../dept/services/dept-repository.service';
 
 @Injectable()
 export class SysUserRepositoryService {
@@ -14,6 +15,8 @@ export class SysUserRepositoryService {
     private readonly sysUserRepository: Repository<SysUserEntity>,
 
     private readonly roleRepositoryService: RoleRepositoryService,
+
+    private readonly deptRepositoryService: DeptRepositoryService
   ) {}
 
   public async createUser({
@@ -21,6 +24,7 @@ export class SysUserRepositoryService {
     password,
     phone,
     roles = [],
+    deptId
   }: CreateUserDto) {
     // 1. 创建用户基本信息
     const user = this.sysUserRepository.create({
@@ -33,6 +37,14 @@ export class SysUserRepositoryService {
     if (roles && roles.length > 0) {
       const roleEntities = await this.roleRepositoryService.findRolesByIds(roles);
       user.roles = roleEntities;
+    }
+
+    if(deptId){
+      const dept = await this.deptRepositoryService.findDeptById(deptId);
+      if (!dept) {
+        throw new ErrorResponseException(ErrorEnum.SYSTEM_DEPT_NOT_FOUND);
+      }
+      user.dept = dept;
     }
 
     // 3. 保存用户信息
@@ -68,7 +80,7 @@ export class SysUserRepositoryService {
    * @returns 更新后的用户信息
    */
   public async updateUser(id: string, updateUserDto: UpdateUserDto) {
-    const { roles = [], ...updateData } = updateUserDto;
+    const { roles = [], deptId, ...updateData } = updateUserDto;
     // 1. 查询用户信息
     const user = await this.sysUserRepository
       .createQueryBuilder('user')
@@ -85,6 +97,14 @@ export class SysUserRepositoryService {
       user.roles = roleEntities;
     }else{
       user.roles = [];
+    }
+
+    if(deptId){
+      const dept = await this.deptRepositoryService.findDeptById(deptId);
+      if (!dept) {
+        throw new ErrorResponseException(ErrorEnum.SYSTEM_DEPT_NOT_FOUND);
+      }
+      user.dept = dept;
     }
 
     // 3. 更新用户信息
@@ -114,6 +134,7 @@ export class SysUserRepositoryService {
     return await this.sysUserRepository
     .createQueryBuilder('user')
     .leftJoinAndSelect('user.roles', 'roles')
+    .leftJoinAndSelect('user.dept', 'dept')
     .where('user.id = :id', { id: Number(id) })
     .getOne();
   }
@@ -139,6 +160,7 @@ export class SysUserRepositoryService {
     const [list, total] = await this.sysUserRepository
     .createQueryBuilder('user')
     .leftJoinAndSelect('user.roles', 'roles')
+    .leftJoinAndSelect('user.dept', 'dept')
     .where(where)
     .skip(skip)
     .take(take)

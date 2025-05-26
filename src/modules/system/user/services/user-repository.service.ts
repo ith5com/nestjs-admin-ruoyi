@@ -46,7 +46,11 @@ export class SysUserRepositoryService {
    * 通过用户名查找用户信息
    */
   public async findUserByUsername(username: string) {
-    return await this.sysUserRepository.findOneBy({ username });
+    return await this.sysUserRepository
+    .createQueryBuilder('user')
+    .where('user.username = :username', { username })
+    .addSelect('user.password')
+    .getOne();
   }
 
   public async getUsersByRoleId(roleId: number): Promise<SysUserEntity[]> {

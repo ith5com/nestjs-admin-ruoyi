@@ -1,11 +1,12 @@
 import { Injectable, forwardRef, Inject } from '@nestjs/common';
 import { Repository, In } from 'typeorm';
 import { SysRoleEntity } from '../entities/role.entity';
-import { CreateRoleDto, DeleteRoleDto } from '../dto/role.dto';
+import { CreateRoleDto, DeleteRoleDto, UpdateRoleDto } from '../dto/role.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
 import { ErrorEnum } from 'src/common/enums/error.enum';
 import { SysUserRepositoryService } from '../../user/services/user-repository.service';
+import { SysMenuRepositoryService } from '../../menu/services/sys-menu.repository.service';
 
 @Injectable()
 export class RoleRepositoryService {
@@ -15,10 +16,26 @@ export class RoleRepositoryService {
 
     @Inject(forwardRef(() => SysUserRepositoryService))
     private readonly sysUserRepositoryService: SysUserRepositoryService,
+
+    @Inject(forwardRef(() => SysMenuRepositoryService))
+    private readonly sysMenuRepositoryService: SysMenuRepositoryService,
   ) {}
 
-  create(createRoleDto: CreateRoleDto) {
-    const role = this.roleRepository.create(createRoleDto);
+  /**
+   * 创建角色
+   * @param createRoleDto 创建角色dto
+   * @returns 创建后的角色
+   */
+  async create(createRoleDto: CreateRoleDto) {
+    // 1. 创建角色
+    const { menus = [], ...rest } = createRoleDto;
+    const role = this.roleRepository.create(rest);
+    // 2. 如果有菜单，则关联菜单
+    if (menus.length > 0) {
+      const menuEntities = await this.sysMenuRepositoryService.findMenusByIds(menus);
+      role.menus = menuEntities;
+    }
+    // 3. 保存角色
     return this.roleRepository.save(role);
   }
 
@@ -51,5 +68,20 @@ export class RoleRepositoryService {
     await this.roleRepository.delete(roleId);
 
     // 4. 后续，需要刷新权限code列表。在权限守卫里面，请求进去，需要先去检查缓存的权限列表，对比。
+  }
+
+  /**
+   * 更新角色
+   * @param id 角色id
+   * @param updateRoleDto 更新角色dto
+   * @returns 更新后的角色
+   */
+  async updateRole(id: string, updateRoleDto: UpdateRoleDto) {
+    const role = await this.roleRepository.findOneBy({ id: Number(id) });
+    if (!role) {
+      throw new ErrorResponseException(ErrorEnum.SYSTEM_ROLE_NOT_FOUND);
+    }
+    Object.assign(role, updateRoleDto);
+    return await this.roleRepository.save(role);
   }
 }

@@ -9,5 +9,6 @@ import { SysMenuEntity } from './entities/menu.entity';
   imports: [TypeOrmModule.forFeature([SysMenuEntity])],
   controllers: [MenuController],
   providers: [MenuService, SysMenuRepositoryService],
+  exports: [SysMenuRepositoryService],
 })
 export class MenuModule {}

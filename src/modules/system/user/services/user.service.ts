@@ -27,6 +27,7 @@ export class UserService {
     const exists =
       await this.sysUserRepositoryService.findUserByUsername(username);
 
+
     if (exists) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_EXISTS);
     }

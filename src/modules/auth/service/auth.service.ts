@@ -23,7 +23,9 @@ export class AuthService {
     if (!user) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_PASSWORD_ERROR);
     }
+    console.log("user",user);
     const cachePassword = user.password;
+    console.log(cachePassword);
     // 校验密码
     const isPass = await this.hashingProvider.comaprePassword(
       password,
@@ -38,7 +40,7 @@ export class AuthService {
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('jwt.system_secret'),
-      expiresIn: '15m',
+      expiresIn: '7d',
     });
 
     const refreshToken = this.jwtService.sign(payload, {
@@ -83,7 +85,7 @@ export class AuthService {
     }
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('jwt.system_secret'),
-      expiresIn: '15m',
+      expiresIn: '7d',
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: 'refresh-secret',

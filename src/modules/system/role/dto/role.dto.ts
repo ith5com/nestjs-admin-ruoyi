@@ -13,11 +13,20 @@ export class RoleDto {
 
   @IsNotEmpty()
   status: number;
+
+  @IsOptional()
+  menus: number[];
 }
 
 export class CreateRoleDto extends RoleDto {}
 
 export class DeleteRoleDto {
+  @IsNotEmpty()
+  id: string;
+}
+
+
+export class UpdateRoleDto extends RoleDto {
   @IsNotEmpty()
   id: string;
 }

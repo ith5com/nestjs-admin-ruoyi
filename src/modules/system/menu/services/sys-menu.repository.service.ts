@@ -82,7 +82,10 @@ export class SysMenuRepositoryService {
    * @param menuIds 菜单id列表
    * @returns 菜单列表
    */
-  async findMenuByIds(menuIds: number[]) {
-    return await this.sysMenuRepository.findBy({ id: In(menuIds) });
+  async findMenusByIds(menuIds: number[]) {
+    return await this.sysMenuRepository
+    .createQueryBuilder('menu')
+    .where('menu.id IN (:...menuIds)', { menuIds })
+    .getMany();
   }
 }

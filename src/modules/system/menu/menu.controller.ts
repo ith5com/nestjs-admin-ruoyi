@@ -14,14 +14,14 @@ import { MenuService } from './services/menu.service';
 import { MenuQueryDto, SysMenuDto } from './dto/menu.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtSystemGuardGuard } from 'src/common/guards/auth/jwt-system-auth.guard';
-import { Permission } from 'src/common/decorators/permission.decorator';
+
 import { PermissionGuard } from 'src/common/guards/permission/permission.guard';
 
 @Controller('menu')
 @UseGuards(JwtSystemGuardGuard, PermissionGuard)
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
-  @Permission('system:menu:create')
+
   @ApiOperation({ summary: '创建菜单' })
   @Post()
   async create(@Body() sysMenuDto: SysMenuDto, @Req() req) {
@@ -43,13 +43,7 @@ export class MenuController {
 
   @ApiOperation({ summary: '获取菜单列表' })
   @Get()
-  async getMenuList(
-    @Query() sysMenuDto: MenuQueryDto,
-  ) {
-  
-    return await this.menuService.getMenuList(
-   
-      sysMenuDto,
-    );
+  async getMenuList(@Query() sysMenuDto: MenuQueryDto) {
+    return await this.menuService.getMenuList(sysMenuDto);
   }
 }

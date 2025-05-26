@@ -29,4 +29,12 @@ export class SysUserRepositoryService {
   public async findUserByUsername(username: string) {
     return await this.sysUserRepository.findOneBy({ username });
   }
+
+  public async getUsersByRoleId(roleId: number): Promise<SysUserEntity[]> {
+    return await this.sysUserRepository
+      .createQueryBuilder('user')
+      .innerJoin('user.roles', 'role')
+      .where('role.id = :roleId', { roleId })
+      .getMany();
+  }
 }

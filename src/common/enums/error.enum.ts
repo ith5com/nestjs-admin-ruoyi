@@ -14,6 +14,8 @@ export enum ErrorEnum {
   SYSTEM_MENU_EXISTS = '2002:菜单已存在',
 
   SYSTEM_ROLE_NOT_FOUND = '3001:角色不存在',
+  SYSTEM_ROLE_NOT_DEL = '3002:角色是超级管理员，不能删除',
+  SYSTEM_ROLE_HAS_USERS = '3003:角色存在关联用户，不能删除',
 
   SYSTEM_DEPT_NOT_FOUND = '4001:部门不存在',
   SYSTEM_DEPT_EXISTS = '4002:部门已存在',

@@ -16,3 +16,8 @@ export class RoleDto {
 }
 
 export class CreateRoleDto extends RoleDto {}
+
+export class DeleteRoleDto {
+  @IsNotEmpty()
+  id: string;
+}

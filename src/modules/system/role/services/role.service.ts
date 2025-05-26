@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateRoleDto, DeleteRoleDto, UpdateRoleDto } from '../dto/role.dto';
+import { CreateRoleDto, DeleteRoleDto, GetRoleListDto, UpdateRoleDto } from '../dto/role.dto';
 import { RoleRepositoryService } from './role-repository.service';
 
 @Injectable()
@@ -21,5 +21,23 @@ export class RoleService {
    */
   async update(id: string, updateRoleDto: UpdateRoleDto) {
     return await this.roleRepositoryService.updateRole(id, updateRoleDto);
+  }
+
+  /**
+   * 获取角色列表
+   * @param query 查询条件
+   * @returns 角色列表
+   */
+  async getList(query: GetRoleListDto) {
+    return await this.roleRepositoryService.getRolesList(query);
+  }
+
+  /**
+   * 获取角色详情
+   * @param id 角色id
+   * @returns 角色详情
+   */
+  async getDetail(id: string) {
+    return await this.roleRepositoryService.getRoleDetail(id);
   }
 }

@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
-import { CreateRoleDto, DeleteRoleDto, UpdateRoleDto } from './dto/role.dto';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { CreateRoleDto, DeleteRoleDto, GetRoleListDto, UpdateRoleDto } from './dto/role.dto';
 import { RoleService } from './services/role.service';
 
 @Controller('role')
@@ -33,5 +33,25 @@ export class RoleController {
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return await this.roleService.update(id, updateRoleDto);
+  }
+
+  /**
+   * 获取角色列表
+   * @param query 查询条件
+   * @returns 角色列表
+   */
+  @Get()
+  async getList(@Query() query: GetRoleListDto) {
+    return await this.roleService.getList(query);
+  }
+
+  /**
+   * 获取角色详情
+   * @param id 角色id
+   * @returns 角色详情
+   */
+  @Get(':id')
+  async getDetail(@Param('id') id: string) {
+    return await this.roleService.getDetail(id);
   }
 }

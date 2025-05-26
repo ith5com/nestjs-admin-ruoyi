@@ -1,7 +1,7 @@
 import { Injectable, forwardRef, Inject } from '@nestjs/common';
-import { Repository, In } from 'typeorm';
+import { Repository, In, Like } from 'typeorm';
 import { SysRoleEntity } from '../entities/role.entity';
-import { CreateRoleDto, DeleteRoleDto, UpdateRoleDto } from '../dto/role.dto';
+import { CreateRoleDto, DeleteRoleDto, GetRoleListDto, UpdateRoleDto } from '../dto/role.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
 import { ErrorEnum } from 'src/common/enums/error.enum';
@@ -77,11 +77,58 @@ export class RoleRepositoryService {
    * @returns 更新后的角色
    */
   async updateRole(id: string, updateRoleDto: UpdateRoleDto) {
-    const role = await this.roleRepository.findOneBy({ id: Number(id) });
+    let {menus = [], ...rest} = updateRoleDto;
+    const role = await this.roleRepository
+    .createQueryBuilder('role')
+    .where('role.id = :id', {id:Number(id)})
+    .getOne()
     if (!role) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_ROLE_NOT_FOUND);
     }
-    Object.assign(role, updateRoleDto);
+    if (menus.length > 0) {
+      const menuEntities = await this.sysMenuRepositoryService.findMenusByIds(menus);
+      role.menus = menuEntities;
+    }
+    Object.assign(role, rest);
     return await this.roleRepository.save(role);
+  }
+
+  /**
+   * 获取角色列表
+   * @param query 查询条件
+   * @returns 角色列表
+   */
+  async getRolesList(query: GetRoleListDto) {
+    const { page = 1, pageSize = 10, name } = query;  
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+    const where = {};
+    if (name) {
+      where['role.name'] = Like(`%${name}%`);
+    }
+    const [list, total] = await this.roleRepository
+    .createQueryBuilder('role')
+    .where(where)
+    .skip(skip)
+    .take(take)
+    .getManyAndCount();
+    return {
+      list,
+      total,
+      page,
+      pageSize
+    };
+  }
+  /**
+   * 获取角色详情
+   * @param id 角色id
+   * @returns 角色详情
+   */
+  async getRoleDetail(id: string) {
+    return await this.roleRepository
+    .createQueryBuilder('role')
+    .where('role.id = :id', { id: Number(id) })
+    .leftJoinAndSelect('role.menus', 'menus')
+    .getOne();
   }
 }

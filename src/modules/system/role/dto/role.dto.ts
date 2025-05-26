@@ -27,6 +27,16 @@ export class DeleteRoleDto {
 
 
 export class UpdateRoleDto extends RoleDto {
-  @IsNotEmpty()
-  id: string;
+
+}
+
+export class GetRoleListDto  {
+  @IsOptional()
+  name: string;
+
+  @IsOptional()
+  page: number;
+
+  @IsOptional()
+  pageSize: number;
 }

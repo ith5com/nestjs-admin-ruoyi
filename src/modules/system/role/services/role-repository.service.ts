@@ -12,6 +12,7 @@ import { ErrorResponseException } from 'src/common/exceptions/error-response.exc
 import { ErrorEnum } from 'src/common/enums/error.enum';
 import { SysUserRepositoryService } from '../../user/services/user-repository.service';
 import { SysMenuRepositoryService } from '../../menu/services/sys-menu.repository.service';
+import { isEmpty } from 'class-validator';
 
 @Injectable()
 export class RoleRepositoryService {
@@ -138,10 +139,19 @@ export class RoleRepositoryService {
       .leftJoinAndSelect('role.menus', 'menus')
       .getOne();
   }
-  async findRoleByUserId(userId: number) {
-    return await this.roleRepository
-      .createQueryBuilder('role')
 
-      .getOne();
+  /**
+   * 根据用户id查询角色id列表
+   * @param userId 用户id
+   * @returns 角色id列表
+   */
+  async findRoleByUserId(userId: number) {
+    let roleIds = await this.roleRepository
+      .createQueryBuilder('role')
+      .leftJoinAndSelect('role.users', 'users')
+      .where('users.id = :userId', { userId })
+      .getMany();
+    if (isEmpty(roleIds)) return [];
+    return roleIds.map((item) => item.id);
   }
 }

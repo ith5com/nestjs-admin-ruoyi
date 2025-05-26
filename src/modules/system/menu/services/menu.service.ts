@@ -1,11 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { MenuQueryDto, SysMenuDto } from '../dto/menu.dto';
 import { SysMenuRepositoryService } from './sys-menu.repository.service';
+import { RoleService } from '../../role/services/role.service';
+import { SysMenuEntity } from '../entities/menu.entity';
+import { generatorRouters } from 'src/utils/permission';
+import { isEmpty } from 'class-validator';
 
 @Injectable()
 export class MenuService {
   constructor(
     private readonly sysMenuRepositoryService: SysMenuRepositoryService,
+    @Inject(forwardRef(() => RoleService))
+    private readonly roleService: RoleService,
   ) {}
   /**
    * 创建菜单
@@ -44,5 +50,43 @@ export class MenuService {
    */
   public async getMenuList(sysMenuDto: MenuQueryDto) {
     return await this.sysMenuRepositoryService.getMenuList(sysMenuDto);
+  }
+
+  /**
+   * 获取用户菜单
+   * @param userId 用户ID
+   * @returns 菜单列表
+   */
+  async findMenusByUserId(userId: number) {
+    let menus: SysMenuEntity[] = [];
+    let roleIds = await this.roleService.getRoleIdsByUser(userId);
+    if (isEmpty(roleIds)) {
+      return generatorRouters([]);
+    }
+    if (roleIds.includes(1)) {
+      // 如果是超级用户，则返回所有菜单
+      menus = await this.sysMenuRepositoryService.findAllMenus();
+    } else {
+      // 根据返回的roleIds集合，查菜单
+      menus = await this.sysMenuRepositoryService.findMenusByRoleIds(roleIds);
+    }
+    return generatorRouters(menus);
+  }
+  /**
+   * 获取用户权限
+   * @param userId 用户ID
+   * @returns 权限列表
+   */
+  async findPermissionByUserId(userId: number) {
+    let roleIds = await this.roleService.getRoleIdsByUser(userId);
+    let permission: string[] = [];
+    if (roleIds.includes(1)) {
+      permission = await this.sysMenuRepositoryService.findAllPermission();
+    } else {
+      if (isEmpty(roleIds)) return permission;
+      permission =
+        await this.sysMenuRepositoryService.findPermissionByRoleIds(roleIds);
+    }
+    return permission;
   }
 }

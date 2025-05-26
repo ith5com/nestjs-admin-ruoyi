@@ -15,6 +15,6 @@ import { MenuModule } from '../menu/menu.module';
   ],
   controllers: [RoleController],
   providers: [RoleService, RoleRepositoryService],
-  exports: [RoleRepositoryService],
+  exports: [RoleRepositoryService, RoleService],
 })
 export class RoleModule {}

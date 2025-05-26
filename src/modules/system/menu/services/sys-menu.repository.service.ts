@@ -84,8 +84,60 @@ export class SysMenuRepositoryService {
    */
   async findMenusByIds(menuIds: number[]) {
     return await this.sysMenuRepository
-    .createQueryBuilder('menu')
-    .where('menu.id IN (:...menuIds)', { menuIds })
-    .getMany();
+      .createQueryBuilder('menu')
+      .where('menu.id IN (:...menuIds)', { menuIds })
+      .getMany();
+  }
+
+  /**
+   * 根据用户id查询菜单
+   * @param roleIds 角色id列表
+   * @returns 菜单列表
+   */
+  async findMenusByRoleIds(roleIds: number[]) {
+    return await this.sysMenuRepository
+      .createQueryBuilder('menu')
+      .leftJoinAndSelect('menu.roles', 'roles')
+      .where('roles.id IN (:...roleIds)', { roleIds })
+      .getMany();
+  }
+  /**
+   * 返回所有菜单
+   * @returns 菜单列表
+   */
+  async findAllMenus() {
+    return await this.sysMenuRepository
+      .createQueryBuilder('menu')
+      .orderBy('menu.sort', 'ASC')
+      .getMany();
+  }
+
+  /**
+   * 获取所有菜单权限
+   * @returns 权限列表
+   */
+  async findAllPermission() {
+    const menus = await this.sysMenuRepository
+      .createQueryBuilder('menu')
+      .select('menu.permission')
+      .where('menu.type IN (:...type)', { type: [1, 2] })
+      .getMany();
+
+    return menus.map((menu) => menu.permission);
+  }
+
+  /**
+   * 根据角色id列表查询菜单权限
+   * @param roleIds 角色id列表
+   * @returns 权限列表
+   */
+  async findPermissionByRoleIds(roleIds: number[]) {
+    const menus = await this.sysMenuRepository
+      .createQueryBuilder('menu')
+      .select('menu.permission')
+      .leftJoinAndSelect('menu.roles', 'roles')
+      .where('roles.id IN (:...roleIds)', { roleIds })
+      .getMany();
+    return menus.map((menu) => menu.permission);
   }
 }

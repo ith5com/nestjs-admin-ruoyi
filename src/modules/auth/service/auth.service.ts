@@ -7,6 +7,7 @@ import { RedisService } from 'src/shared/redis/redis.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
+import { MenuService } from 'src/modules/system/menu/services/menu.service';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
     private readonly redisService: RedisService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly menuService: MenuService,
   ) {}
   public async login({ username, password }: LoginDto) {
     const user =
@@ -23,7 +25,7 @@ export class AuthService {
     if (!user) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_PASSWORD_ERROR);
     }
-    console.log("user",user);
+    console.log('user', user);
     const cachePassword = user.password;
     console.log(cachePassword);
     // 校验密码
@@ -106,5 +108,22 @@ export class AuthService {
       60 * 60 * 24 * 7,
     );
     return { accessToken, refreshToken };
+  }
+  /**
+   * 获取用户菜单
+   * @param userId 用户ID
+   * @returns 菜单列表
+   */
+  async getMenus(userId: number) {
+    const menus = await this.menuService.findMenusByUserId(userId);
+    return menus;
+  }
+  /**
+   * 获取当前用户的所有权限
+   */
+  async getPermissions(userId: number): Promise<string[]> {
+    const permissions = await this.menuService.findPermissionByUserId(userId);
+
+    return permissions;
   }
 }

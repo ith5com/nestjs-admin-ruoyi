@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateRoleDto, DeleteRoleDto, GetRoleListDto, UpdateRoleDto } from '../dto/role.dto';
+import {
+  CreateRoleDto,
+  DeleteRoleDto,
+  GetRoleListDto,
+  UpdateRoleDto,
+} from '../dto/role.dto';
 import { RoleRepositoryService } from './role-repository.service';
 
 @Injectable()
@@ -39,5 +44,9 @@ export class RoleService {
    */
   async getDetail(id: string) {
     return await this.roleRepositoryService.getRoleDetail(id);
+  }
+
+  async getRoleIdsByUser(userId: number) {
+    return await this.roleRepositoryService.findRoleByUserId(userId);
   }
 }

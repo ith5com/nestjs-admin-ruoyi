@@ -1,7 +1,6 @@
 import { SysMenuEntity } from 'src/modules/system/menu/entities/menu.entity';
 
 export function generatorRouters(menus: SysMenuEntity[]) {
-  console.log('menus=111222===>', menus);
   return filterAsyncRoutes(menus, null);
 }
 

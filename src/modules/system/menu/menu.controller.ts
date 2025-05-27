@@ -25,7 +25,6 @@ export class MenuController {
   @ApiOperation({ summary: '创建菜单' })
   @Post()
   async create(@Body() sysMenuDto: SysMenuDto, @Req() req) {
-    console.log('req.user', req.user);
     return await this.menuService.create(sysMenuDto);
   }
 

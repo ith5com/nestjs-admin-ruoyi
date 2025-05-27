@@ -14,10 +14,7 @@ export class PermissionGuard implements CanActivate {
       PERMISSION_KEY,
       [context.getHandler(), context.getClass()],
     );
-    console.log('permissionCode', permissionCode);
     const request: any = context.switchToHttp().getRequest<Request>();
-
-    console.log('user', request.user);
 
     // 获取 jwt 挂载到user里面的id,
     // 根据userId 查找角色

@@ -19,15 +19,20 @@ export class AuthService {
     private readonly configService: ConfigService,
     private readonly menuService: MenuService,
   ) {}
+  /**
+   * 登录
+   * @param username 用户名
+   * @param password 密码
+   * @returns 登录成功后的用户信息、accessToken、refreshToken
+   */
   public async login({ username, password }: LoginDto) {
     const user =
       await this.sysUserRepositoryService.findUserByUsername(username);
     if (!user) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_PASSWORD_ERROR);
     }
-    console.log('user', user);
+
     const cachePassword = user.password;
-    console.log(cachePassword);
     // 校验密码
     const isPass = await this.hashingProvider.comaprePassword(
       password,
@@ -40,13 +45,15 @@ export class AuthService {
       username: user.username,
     };
 
+    // 生成accessToken
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('jwt.system_secret'),
       expiresIn: '7d',
     });
 
+    // 生成refreshToken
     const refreshToken = this.jwtService.sign(payload, {
-      secret: 'refresh-secret',
+      secret: this.configService.get('jwt.system_secret'),
       expiresIn: '7d',
     });
     // 存储到redis中，后面做挤兑下线功能
@@ -54,12 +61,12 @@ export class AuthService {
       `accessToken:user_${user.id}`,
       accessToken,
       'EX',
-      60 * 15,
+      60 * 1,
     );
     // 存储到redis中，后面做挤兑下线功能
     await this.redisService.set(
       `refreshToken:user_${user.id}`,
-      accessToken,
+      refreshToken,
       'EX',
       60 * 60 * 24 * 7,
     );
@@ -71,34 +78,40 @@ export class AuthService {
         status: user.status,
       },
       accessToken: accessToken,
-      refreshToken,
+      refreshToken: refreshToken,
     };
   }
 
   public async refreshToken(data: { refreshToken: string }) {
-    let payload = {} as any;
+    let verifyData = {} as any;
     try {
-      payload = await this.jwtService.verifyAsync(data.refreshToken, {
+      verifyData = await this.jwtService.verifyAsync(data.refreshToken, {
         secret: this.configService.get('jwt.system_secret'),
       });
     } catch (error) {
-      console.log(error);
       throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_UNAUTHORIZED);
     }
+
+    let payload = {
+      sub: verifyData.sub,
+      username: verifyData.username,
+    };
+
     const accessToken = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get('jwt.system_secret'),
+      expiresIn: '1m',
+    });
+    const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get('jwt.system_secret'),
       expiresIn: '7d',
     });
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: 'refresh-secret',
-      expiresIn: '7d',
-    });
+    console.log({ accessToken, refreshToken });
     // 存储到redis中，后面做挤兑下线功能
     await this.redisService.set(
       `accessToken:user_${payload.sub}`,
       accessToken,
       'EX',
-      60 * 15,
+      60 * 1,
     );
     // 存储到redis中，后面做挤兑下线功能
     await this.redisService.set(

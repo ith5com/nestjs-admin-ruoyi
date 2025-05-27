@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SysUserEntity } from '../entities/user.entity';
 import { Like, Repository } from 'typeorm';
-import { CreateUserDto, GetUserListDto, UpdateUserDto } from '../dto/user.dto';
+import {
+  CreateUserDto,
+  DeleteUserDto,
+  GetUserListDto,
+  UpdateUserDto,
+} from '../dto/user.dto';
 import { RoleRepositoryService } from '../../role/services/role-repository.service';
 import { ErrorEnum } from 'src/common/enums/error.enum';
 import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
@@ -146,32 +151,49 @@ export class SysUserRepositoryService {
    * @returns 用户列表
    */
   public async getUserList(query: GetUserListDto) {
-    const { page = 1, pageSize = 10, username, phone, status } = query;
+    const { page = 1, pageSize = 10, username, phone, status, deptId } = query;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
-    const where = {};
-    if (username) {
-      where['user.username'] = Like(`%${username}%`);
-    }
-    if (phone) {
-      where['user.phone'] = Like(`%${phone}%`);
-    }
-    if (status) {
-      where['user.status'] = status;
-    }
-    const [list, total] = await this.sysUserRepository
+
+    const queryBuilder = this.sysUserRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.roles', 'roles')
-      .leftJoinAndSelect('user.dept', 'dept')
-      .where(where)
+      .leftJoinAndSelect('user.dept', 'dept');
+
+    if (deptId) {
+      queryBuilder.andWhere('dept.id = :deptId', { deptId });
+    }
+    if (username) {
+      queryBuilder.andWhere('user.username LIKE :username', {
+        username: `%${username}%`,
+      });
+    }
+    if (phone) {
+      queryBuilder.andWhere('user.phone LIKE :phone', { phone: `%${phone}%` });
+    }
+    if (status !== undefined) {
+      queryBuilder.andWhere('user.status = :status', { status });
+    }
+
+    const [list, total] = await queryBuilder
       .skip(skip)
       .take(take)
       .getManyAndCount();
+
     return {
       list,
       total,
       page,
       pageSize,
     };
+  }
+
+  /**
+   * 批量删除用户
+   * @param deleteUserDto 删除用户dto
+   * @returns 删除后的用户信息
+   */
+  public async batchDeleteUsers(deleteUserDto: DeleteUserDto) {
+    return await this.sysUserRepository.delete(deleteUserDto.ids);
   }
 }

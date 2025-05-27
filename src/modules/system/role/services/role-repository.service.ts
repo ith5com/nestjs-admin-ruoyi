@@ -154,4 +154,20 @@ export class RoleRepositoryService {
     if (isEmpty(roleIds)) return [];
     return roleIds.map((item) => item.id);
   }
+
+  /**
+   * 获取角色选项
+   * @returns 角色选项
+   */
+  async getRoleOptions() {
+    const roles = await this.roleRepository
+      .createQueryBuilder('role')
+      .select(['role.id', 'role.name'])
+      .getMany();
+
+    return roles.map((role) => ({
+      label: role.name,
+      value: role.id,
+    }));
+  }
 }

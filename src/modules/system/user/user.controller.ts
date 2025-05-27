@@ -11,7 +11,12 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './services/user.service';
-import { CreateUserDto, GetUserListDto, UpdateUserDto } from './dto/user.dto';
+import {
+  CreateUserDto,
+  DeleteUserDto,
+  GetUserListDto,
+  UpdateUserDto,
+} from './dto/user.dto';
 import { JwtSystemGuardGuard } from 'src/common/guards/auth/jwt-system-auth.guard';
 
 @ApiTags('系统用户')
@@ -47,6 +52,11 @@ export class UserController {
   @Delete(':id')
   async deleteUser(@Param('id') id: string) {
     return await this.userService.deleteUser(id);
+  }
+
+  @Post('batch')
+  async deleteUsers(@Body() deleteUserDto: DeleteUserDto) {
+    return await this.userService.batchDeleteUsers(deleteUserDto);
   }
 
   /**

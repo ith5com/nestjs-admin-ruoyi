@@ -49,4 +49,8 @@ export class RoleService {
   async getRoleIdsByUser(userId: number) {
     return await this.roleRepositoryService.findRoleByUserId(userId);
   }
+
+  async getOptions() {
+    return await this.roleRepositoryService.getRoleOptions();
+  }
 }

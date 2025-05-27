@@ -8,7 +8,8 @@ export enum ErrorEnum {
   SYSTEM_USER_NOT_FOUND = '1002:用户不存在',
   SYSTEM_USER_PASSWORD_ERROR = '1003:账号名或密码错误',
   SYSTEM_USER_EMTERY = '1004:用户不存在',
-  SYSTEM_USER_ADMIN_DELETE = '1005:管理员不能删除',
+  SYSTEM_USER_STATUS_ERROR = '1005:用户已禁用',
+  SYSTEM_USER_ADMIN_DELETE = '1006:管理员不能删除',
   SYSTEM_USER_UNAUTHORIZED = '1000:token过期重新登录',
 
   SYSTEM_MENU_NOT_FOUND = '2001:菜单不存在',

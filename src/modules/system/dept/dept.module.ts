@@ -6,9 +6,9 @@ import { DeptEntity } from './entities/dept.entity';
 import { DeptRepositoryService } from './services/dept-repository.service';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([DeptEntity])],
-    controllers: [DeptController],
-    providers: [DeptService,DeptRepositoryService],
-    exports:[DeptService,DeptRepositoryService]
+  imports: [TypeOrmModule.forFeature([DeptEntity])],
+  controllers: [DeptController],
+  providers: [DeptService, DeptRepositoryService],
+  exports: [DeptService, DeptRepositoryService],
 })
 export class DeptModule {}

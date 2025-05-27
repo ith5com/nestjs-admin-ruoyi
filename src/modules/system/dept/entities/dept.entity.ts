@@ -3,7 +3,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SysUserEntity } from '../../user/entities/user.entity';
 
 @Entity('sys_dept')
-export class DeptEntity extends BaseEntity{
+export class DeptEntity extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 255,
@@ -20,21 +20,22 @@ export class DeptEntity extends BaseEntity{
   code: string;
 
   @Column({
-    type: 'varchar',
-    name:'parent_id',
+    type: 'int',
+    name: 'parent_id',
     nullable: true,
+    default: 0,
     comment: '父级id',
   })
   parentId: number;
 
   @Column({
-    type: 'varchar',
-    name:'order_num',
-    default:0,
+    type: 'int',
+    name: 'order_num',
+    default: 0,
     comment: '排序',
   })
   orderNum: number;
 
-  @OneToMany(()=>SysUserEntity,user=>user.dept)
+  @OneToMany(() => SysUserEntity, (user) => user.dept)
   users: SysUserEntity[];
 }

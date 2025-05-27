@@ -31,6 +31,9 @@ export class AuthService {
     if (!user) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_PASSWORD_ERROR);
     }
+    if (user.status === 0) {
+      throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_STATUS_ERROR);
+    }
 
     const cachePassword = user.password;
     // 校验密码

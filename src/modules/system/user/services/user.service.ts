@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto, GetUserListDto, UpdateUserDto } from '../dto/user.dto';
+import {
+  CreateUserDto,
+  DeleteUserDto,
+  GetUserListDto,
+  UpdateUserDto,
+} from '../dto/user.dto';
 import { HashingProvider } from './hashing.provider';
 import { SysUserRepositoryService } from './user-repository.service';
 import { ErrorEnum } from 'src/common/enums/error.enum';
@@ -22,12 +27,11 @@ export class UserService {
     password,
     phone,
     roles = [],
-    deptId
+    deptId,
   }: CreateUserDto) {
     // 判断是否存在用户
     const exists =
       await this.sysUserRepositoryService.findUserByUsername(username);
-
 
     if (exists) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_USER_EXISTS);
@@ -84,5 +88,17 @@ export class UserService {
    */
   getUserList(query: GetUserListDto) {
     return this.sysUserRepositoryService.getUserList(query);
+  }
+
+  /**
+   * 批量删除用户
+   * @param deleteU户Dto 删除用户dto
+   * @returns 删除后的用户信息
+   * 
+  }@param deleteUserDto 删除用户dto
+   * @returns 删除后的用户信息
+   */
+  batchDeleteUsers(deleteUserDto: DeleteUserDto) {
+    return this.sysUserRepositoryService.batchDeleteUsers(deleteUserDto);
   }
 }

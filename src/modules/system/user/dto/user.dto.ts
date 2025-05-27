@@ -1,5 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
+  IsArray,
   IsIn,
   IsNotEmpty,
   IsOptional,
@@ -34,15 +35,13 @@ export class UserDto {
 
 export class CreateUserDto extends UserDto {
   @IsOptional()
-  roles: number[]|null;
-
+  roles: number[] | null;
 
   @IsOptional()
   deptId: number;
 }
 
-
-export class UpdateUserDto  {
+export class UpdateUserDto {
   @IsString()
   @Matches(/^[\s\S]+$/)
   @MinLength(4)
@@ -57,21 +56,19 @@ export class UpdateUserDto  {
   status?: number;
 
   @IsNotEmpty()
-  roles: number[]|null;
+  roles: number[] | null;
 
   @IsOptional()
   deptId: number;
 }
 
 export class GetUserListDto {
+  @IsOptional()
+  username?: string;
 
   @IsOptional()
-  username: string;
+  phone?: string;
 
-  @IsOptional()
-  phone: string;
-
-  @IsIn([0, 1])
   @IsOptional()
   status?: number;
 
@@ -80,4 +77,13 @@ export class GetUserListDto {
 
   @IsOptional()
   pageSize: number;
+
+  @IsOptional()
+  deptId?: string;
+}
+
+export class DeleteUserDto {
+  @IsArray()
+  @IsNotEmpty()
+  ids: number[];
 }

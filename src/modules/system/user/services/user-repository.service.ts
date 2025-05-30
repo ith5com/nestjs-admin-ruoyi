@@ -11,7 +11,6 @@ import {
 import { RoleRepositoryService } from '../../role/services/role-repository.service';
 import { ErrorEnum } from 'src/common/enums/error.enum';
 import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
-import { DeptRepositoryService } from '../../dept/services/dept-repository.service';
 
 @Injectable()
 export class SysUserRepositoryService {
@@ -20,8 +19,6 @@ export class SysUserRepositoryService {
     private readonly sysUserRepository: Repository<SysUserEntity>,
 
     private readonly roleRepositoryService: RoleRepositoryService,
-
-    private readonly deptRepositoryService: DeptRepositoryService,
   ) {}
 
   public async createUser({
@@ -43,14 +40,6 @@ export class SysUserRepositoryService {
       const roleEntities =
         await this.roleRepositoryService.findRolesByIds(roles);
       user.roles = roleEntities;
-    }
-
-    if (deptId) {
-      const dept = await this.deptRepositoryService.findDeptById(deptId);
-      if (!dept) {
-        throw new ErrorResponseException(ErrorEnum.SYSTEM_DEPT_NOT_FOUND);
-      }
-      user.dept = dept;
     }
 
     // 3. 保存用户信息
@@ -106,15 +95,6 @@ export class SysUserRepositoryService {
     } else {
       user.roles = [];
     }
-
-    if (deptId) {
-      const dept = await this.deptRepositoryService.findDeptById(deptId);
-      if (!dept) {
-        throw new ErrorResponseException(ErrorEnum.SYSTEM_DEPT_NOT_FOUND);
-      }
-      user.dept = dept;
-    }
-
     // 3. 更新用户信息
     Object.assign(user, updateData);
     return await this.sysUserRepository.save(user);

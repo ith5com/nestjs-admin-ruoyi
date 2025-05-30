@@ -8,6 +8,7 @@ import { SystemModule } from './modules/system/system.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RedisModule } from './shared/redis/redis.module';
 import { JwtAuthModule } from './shared/jwt/jwt.module';
+import { PersonnelModule } from './modules/personnel/personnel.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { JwtAuthModule } from './shared/jwt/jwt.module';
     AuthModule,
     RedisModule,
     JwtAuthModule,
+    PersonnelModule,
   ],
   controllers: [AppController],
   providers: [AppService, LoggerService],

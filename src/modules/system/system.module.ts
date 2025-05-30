@@ -3,7 +3,6 @@ import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
 import { MenuModule } from './menu/menu.module';
 import { RouterModule } from '@nestjs/core';
-import { DeptModule } from './dept/dept.module';
 @Module({
   imports: [
     UserModule,
@@ -13,10 +12,9 @@ import { DeptModule } from './dept/dept.module';
       {
         path: 'system',
         module: SystemModule,
-        children: [UserModule, RoleModule, MenuModule,DeptModule],
+        children: [UserModule, RoleModule, MenuModule],
       },
     ]),
-    DeptModule,
   ],
 })
 export class SystemModule {}

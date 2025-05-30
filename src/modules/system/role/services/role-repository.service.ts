@@ -79,7 +79,7 @@ export class RoleRepositoryService {
     // 3. 执行删除操作
     await this.roleRepository.delete(roleId);
 
-    // 4. 后续，需要刷新权限code列表。在权限守卫里面，请求进去，需要先去检查缓存的权限列表，对比。
+    // 在权限守卫里面，请求进去，需要先去检查缓存的权限列表，对比。
   }
 
   /**

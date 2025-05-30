@@ -30,7 +30,7 @@ export class DeptService {
     const depts = await this.deptRepositoryService.getDeptTree();
     // 处理数据，移除敏感字段
     const processDept = (dept: DeptEntity) => {
-      const { users, ...rest } = dept;
+      const { staffs, ...rest } = dept;
       if (dept['children']) {
         rest['children'] = dept['children'].map(processDept);
       }

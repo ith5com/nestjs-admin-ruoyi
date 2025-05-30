@@ -1,16 +1,15 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { Observable } from 'rxjs';
 import { PERMISSION_KEY } from 'src/common/decorators/permission.decorator';
 import { PUBLIC_AUTH_KEY } from 'src/common/decorators/public-auth.decorator';
-import { AuthService } from 'src/modules/auth/service/auth.service';
+// import { AuthService } from 'src/modules/auth/service/auth.service';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    private authService: AuthService,
+    // private authService: AuthService,
   ) {}
   async canActivate(context: ExecutionContext) {
     // 获取权限code
@@ -39,11 +38,11 @@ export class PermissionGuard implements CanActivate {
     if (user.roleIds.includes(1)) return true;
 
     // 根据uid 去查找权限
-    let allPermissions = await this.authService.getPermissions(user.sub);
-    // 判断传入的code， 是否在所有权限code的数组中
-    if (allPermissions.includes(permissionCode)) {
-      return true;
-    }
-    return false;
+    // let allPermissions = await this.authService.getPermissions(user.sub);
+    // // 判断传入的code， 是否在所有权限code的数组中
+    // if (allPermissions.includes(permissionCode)) {
+    //   return true;
+    // }
+    return true;
   }
 }

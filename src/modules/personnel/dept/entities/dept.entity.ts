@@ -1,6 +1,7 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { SysUserEntity } from '../../user/entities/user.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
+
+import { StaffEntity } from '../../staff/entities/staff.entity';
 
 @Entity('sys_dept')
 export class DeptEntity extends BaseEntity {
@@ -36,6 +37,6 @@ export class DeptEntity extends BaseEntity {
   })
   orderNum: number;
 
-  @OneToMany(() => SysUserEntity, (user) => user.dept)
-  users: SysUserEntity[];
+  @OneToMany(() => StaffEntity, (staff) => staff.dept)
+  staffs: StaffEntity[];
 }

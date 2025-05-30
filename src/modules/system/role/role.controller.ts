@@ -15,6 +15,8 @@ import {
   UpdateRoleDto,
 } from './dto/role.dto';
 import { RoleService } from './services/role.service';
+import { Permission } from 'src/common/decorators/permission.decorator';
+import { permission } from 'process';
 
 @Controller('role')
 export class RoleController {
@@ -25,6 +27,7 @@ export class RoleController {
    * @returns 创建后的角色
    */
   @Post()
+  @Permission('system:role:create')
   async create(@Body() createUserDto: CreateRoleDto) {
     return await this.roleService.create(createUserDto);
   }
@@ -35,6 +38,7 @@ export class RoleController {
    * @returns 删除后的角色
    */
   @Delete(':id')
+  @Permission('system:role:del')
   async delete(@Param() deleteRoleDto: DeleteRoleDto) {
     return await this.roleService.delete(deleteRoleDto);
   }
@@ -45,6 +49,7 @@ export class RoleController {
    * @returns 更新后的角色
    */
   @Put(':id')
+  @Permission('system:role:update')
   async update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
     return await this.roleService.update(id, updateRoleDto);
   }
@@ -55,6 +60,7 @@ export class RoleController {
    * @returns 角色列表
    */
   @Get()
+  @Permission('system:role:list')
   async getList(@Query() query: GetRoleListDto) {
     return await this.roleService.getList(query);
   }

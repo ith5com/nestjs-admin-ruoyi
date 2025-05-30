@@ -18,6 +18,7 @@ import {
   UpdateUserDto,
 } from './dto/user.dto';
 import { JwtSystemGuardGuard } from 'src/common/guards/auth/jwt-system-auth.guard';
+import { Permission } from 'src/common/decorators/permission.decorator';
 
 @ApiTags('系统用户')
 @UseGuards(JwtSystemGuardGuard)
@@ -26,6 +27,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
   @ApiOperation({ summary: '创建系统用户' })
   @Post()
+  @Permission('system:user:create')
   async createUser(@Body() createUserDto: CreateUserDto) {
     return await this.userService.createUser(createUserDto);
   }
@@ -37,6 +39,7 @@ export class UserController {
    * @returns 更新后的用户信息
    */
   @Put(':id')
+  @Permission('system:user:update')
   async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -49,14 +52,11 @@ export class UserController {
    * @param id 用户id
    * @returns 删除后的用户信息
    */
+
   @Delete(':id')
+  @Permission('system:user:del')
   async deleteUser(@Param('id') id: string) {
     return await this.userService.deleteUser(id);
-  }
-
-  @Post('batch')
-  async deleteUsers(@Body() deleteUserDto: DeleteUserDto) {
-    return await this.userService.batchDeleteUsers(deleteUserDto);
   }
 
   /**
@@ -65,6 +65,7 @@ export class UserController {
    * @returns 用户详情
    */
   @Get(':id')
+  @Permission('system:user:list')
   async getUserDetail(@Param('id') id: string) {
     return await this.userService.getUserDetail(id);
   }
@@ -74,6 +75,7 @@ export class UserController {
    * @returns 用户列表
    */
   @Get()
+  @Permission('system:user:list')
   async getUserList(@Query() query: GetUserListDto) {
     return await this.userService.getUserList(query);
   }

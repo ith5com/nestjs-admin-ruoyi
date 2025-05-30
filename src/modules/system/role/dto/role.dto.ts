@@ -1,4 +1,6 @@
+import { PartialType } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, Length } from 'class-validator';
+import { optional } from 'joi';
 
 export class RoleDto {
   @Length(2, 10)
@@ -25,18 +27,21 @@ export class DeleteRoleDto {
   id: string;
 }
 
+export class UpdateRoleDto extends RoleDto {}
 
-export class UpdateRoleDto extends RoleDto {
-
-}
-
-export class GetRoleListDto  {
+export class GetRoleListDto {
   @IsOptional()
-  name: string;
+  name?: string;
 
   @IsOptional()
-  page: number;
+  status?: number;
 
   @IsOptional()
-  pageSize: number;
+  code?: string;
+
+  @IsOptional()
+  page?: number = 1;
+
+  @IsOptional()
+  pageSize?: number = 10;
 }

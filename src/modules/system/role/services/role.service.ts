@@ -13,7 +13,11 @@ export class RoleService {
   async create(createRoleDto: CreateRoleDto) {
     return await this.roleRepositoryService.create(createRoleDto);
   }
-
+  /**
+   * 删除角色
+   * @param deleteRoleDto 删除角色dto
+   * @returns 删除后的角色
+   */
   async delete(deleteRoleDto: DeleteRoleDto) {
     return await this.roleRepositoryService.delete(deleteRoleDto);
   }

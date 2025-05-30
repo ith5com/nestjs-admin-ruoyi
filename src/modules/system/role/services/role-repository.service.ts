@@ -58,6 +58,11 @@ export class RoleRepositoryService {
       .getMany();
   }
 
+  /**
+   * 删除角色
+   * @param deleteRoleDto 删除角色dto
+   * @returns 删除后的角色
+   */
   async delete({ id }: DeleteRoleDto) {
     const roleId = Number(id);
     // 1. 根据角色id, 判断是否是admin角色，如果是，不能删除
@@ -107,21 +112,38 @@ export class RoleRepositoryService {
    * @returns 角色列表
    */
   async getRolesList(query: GetRoleListDto) {
-    const { page = 1, pageSize = 10, name } = query;
+    const { page = 1, pageSize = 10, name, status, code } = query;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
     const where = {};
     if (name) {
-      where['role.name'] = Like(`%${name}%`);
+      where['name'] = Like(`%${name}%`);
     }
+    if (status) {
+      where['status'] = status;
+    }
+    if (code) {
+      where['code'] = code;
+    }
+    console.log({ name, status, code });
     const [list, total] = await this.roleRepository
       .createQueryBuilder('role')
+      .leftJoinAndSelect('role.menus', 'menus')
+      .select(['role.id', 'role.name', 'role.status', 'role.code', 'menus.id'])
       .where(where)
       .skip(skip)
       .take(take)
       .getManyAndCount();
+
+    const data = list.map((role: any) => {
+      return {
+        ...role,
+        menus: role.menus.map((menu: any) => menu.id),
+      };
+    });
+    console.log({ data });
     return {
-      list,
+      list: data,
       total,
       page,
       pageSize,

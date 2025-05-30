@@ -3,7 +3,11 @@ import { MenuQueryDto, SysMenuDto } from '../dto/menu.dto';
 import { SysMenuRepositoryService } from './sys-menu.repository.service';
 import { RoleService } from '../../role/services/role.service';
 import { SysMenuEntity } from '../entities/menu.entity';
-import { generatorRouters } from 'src/utils/permission';
+import {
+  buildTree,
+  buildTreeList,
+  generatorRouters,
+} from 'src/utils/permission';
 import { isEmpty } from 'class-validator';
 
 @Injectable()
@@ -49,7 +53,11 @@ export class MenuService {
    * @returns 菜单列表
    */
   public async getMenuList(sysMenuDto: MenuQueryDto) {
-    return await this.sysMenuRepositoryService.getMenuList(sysMenuDto);
+    const menus = await this.sysMenuRepositoryService.getMenuList(sysMenuDto);
+    return {
+      list: buildTreeList(menus.list),
+      total: menus.total,
+    };
   }
 
   /**
@@ -88,5 +96,26 @@ export class MenuService {
         await this.sysMenuRepositoryService.findPermissionByRoleIds(roleIds);
     }
     return permission;
+  }
+
+  /**
+   * 获取菜单选项
+   * @returns 菜单选项
+   */
+  async getMenuOptions(userId: number) {
+    let menus: SysMenuEntity[] = [];
+    let roleIds = await this.roleService.getRoleIdsByUser(userId);
+
+    if (isEmpty(roleIds)) {
+      return generatorRouters([]);
+    }
+    if (roleIds.includes(1)) {
+      // 如果是超级用户，则返回所有菜单
+      menus = await this.sysMenuRepositoryService.findAllMenus();
+    } else {
+      // 根据返回的roleIds集合，查菜单
+      menus = await this.sysMenuRepositoryService.findMenusByRoleIds(roleIds);
+    }
+    return buildTree(menus);
   }
 }

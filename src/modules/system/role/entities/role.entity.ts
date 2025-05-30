@@ -6,10 +6,22 @@ import { SysMenuEntity } from '../../menu/entities/menu.entity';
 
 @Entity({ name: 'sys_roles' })
 export class SysRoleEntity extends BaseEntity {
-  @Column({ name: 'name', type: 'varchar' })
+  @Column({
+    name: 'name',
+    type: 'varchar',
+    unique: true,
+    nullable: false,
+    comment: '角色名称',
+  })
   name: string;
 
-  @Column({ name: 'code', type: 'varchar' })
+  @Column({
+    name: 'code',
+    type: 'varchar',
+    unique: true,
+    nullable: false,
+    comment: '角色编码',
+  })
   code: string;
 
   @Column({ name: 'status', type: 'enum', default: 1, enum: StatusEnum })

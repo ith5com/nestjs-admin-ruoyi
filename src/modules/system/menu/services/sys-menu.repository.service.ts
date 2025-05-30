@@ -44,9 +44,13 @@ export class SysMenuRepositoryService {
    * @returns 删除的菜单
    */
   public async delete(id: number) {
-    const sysMenu = await this.sysMenuRepository.findOne({ where: { id } });
-    if (!sysMenu) {
-      throw new ErrorResponseException(ErrorEnum.SYSTEM_MENU_NOT_FOUND);
+    // 如果绑定了角色，则不能删除
+    const roleMenu = await this.sysMenuRepository.findOne({
+      where: { id },
+      relations: ['roles'],
+    });
+    if (roleMenu && roleMenu.roles.length > 0) {
+      throw new ErrorResponseException(ErrorEnum.SYSTEM_MENU_HAS_ROLE);
     }
     return await this.sysMenuRepository.delete(id);
   }
@@ -59,21 +63,16 @@ export class SysMenuRepositoryService {
    * @returns 菜单列表
    */
   public async getMenuList(sysMenuDto: MenuQueryDto) {
-    const { name, page = 1, pageSize = 10 } = sysMenuDto;
+    const { name } = sysMenuDto;
     const queryBuilder = this.sysMenuRepository.createQueryBuilder('menu');
 
     if (name) {
       queryBuilder.andWhere('menu.name LIKE :name', { name: `%${name}%` });
     }
-    const [menus, total] = await queryBuilder
-      .skip((page - 1) * pageSize)
-      .take(pageSize)
-      .getManyAndCount();
+    const [list, total] = await queryBuilder.getManyAndCount();
     return {
-      menus,
+      list,
       total,
-      page,
-      pageSize,
     };
   }
 
@@ -139,5 +138,17 @@ export class SysMenuRepositoryService {
       .where('roles.id IN (:...roleIds)', { roleIds })
       .getMany();
     return menus.map((menu) => menu.permission);
+  }
+
+  /**
+   * 获取菜单选项
+   * @returns 菜单选项
+   */
+  async getMenuOptions() {
+    return await this.sysMenuRepository
+      .createQueryBuilder('menu')
+      .select(['menu.id', 'menu.name'])
+      .orderBy('menu.sort', 'ASC')
+      .getMany();
   }
 }

@@ -22,19 +22,19 @@ export class SysMenuDto {
 
   @ApiProperty({ description: '路由地址' })
   @IsString()
+  @IsOptional()
   @ValidateIf((o) => o.type !== MenuEnum.BUTTON)
   path: string;
 
   @ApiProperty({ description: '菜单图标' })
   @IsString()
-  @ValidateIf((o) => o.type !== MenuEnum.BUTTON)
   @IsOptional()
+  @ValidateIf((o) => o.type !== MenuEnum.BUTTON)
   icon?: string;
 
   @ApiProperty({ description: '菜单排序' })
-  @IsNumber()
   @IsOptional()
-  sort?: number = 0;
+  sort?: string = '0';
 
   @ApiProperty({ description: '菜单类型' })
   @IsEnum(MenuEnum)
@@ -71,12 +71,10 @@ export class MenuUpdateDto extends PartialType(SysMenuDto) {}
 
 export class MenuQueryDto extends PartialType(SysMenuDto) {
   @ApiProperty({ description: '页码', required: false, default: 1 })
-
   @IsOptional()
   page?: number = 1;
 
   @ApiProperty({ description: '每页条数', required: false, default: 10 })
- 
   @IsOptional()
   pageSize?: number = 10;
 }

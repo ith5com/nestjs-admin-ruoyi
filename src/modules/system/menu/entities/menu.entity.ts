@@ -9,11 +9,16 @@ class SysMenuEntity extends BaseEntity {
   @Column({ type: 'enum', default: MenuEnum.DIR, enum: MenuEnum })
   type: number;
 
-  @Column({ name: 'icon', type: 'varchar', comment: '菜单图标' })
+  @Column({
+    name: 'icon',
+    type: 'varchar',
+    comment: '菜单图标',
+    nullable: true,
+  })
   icon: string;
 
   @Column({ name: 'sort', type: 'int', comment: '显示排序' })
-  sort: number;
+  sort: string;
 
   @Column({ name: 'name', type: 'varchar', comment: '菜单名称' })
   name: string;
@@ -27,7 +32,12 @@ class SysMenuEntity extends BaseEntity {
   })
   isLink: number;
 
-  @Column({ name: 'path', type: 'varchar', comment: '路由地址' })
+  @Column({
+    name: 'path',
+    type: 'varchar',
+    comment: '路由地址',
+    nullable: true,
+  })
   path: string;
 
   @Column({
@@ -51,7 +61,13 @@ class SysMenuEntity extends BaseEntity {
   @Column({ type: 'int', nullable: true, comment: '父级ID', default: null })
   parentId: number;
 
-  @Column({ type: 'varchar', length: 100, nullable: true, comment: '权限标识' })
+  @Column({
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+    comment: '权限标识',
+    unique: true,
+  })
   permission: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true, comment: '组件路径' })

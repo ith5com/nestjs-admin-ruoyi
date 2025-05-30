@@ -50,6 +50,11 @@ export class RoleService {
     return await this.roleRepositoryService.getRoleDetail(id);
   }
 
+  /**
+   *
+   * @param userId
+   * @returns 返回角色IDs
+   */
   async getRoleIdsByUser(userId: number) {
     return await this.roleRepositoryService.findRoleByUserId(userId);
   }

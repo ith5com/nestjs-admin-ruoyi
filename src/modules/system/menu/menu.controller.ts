@@ -55,6 +55,6 @@ export class MenuController {
   @ApiOperation({ summary: '获取菜单选项' })
   @Get('options')
   async getMenuOptions(@CurrentUser() user) {
-    return await this.menuService.getMenuOptions(user.userId);
+    return await this.menuService.getMenuOptions(user.sub);
   }
 }

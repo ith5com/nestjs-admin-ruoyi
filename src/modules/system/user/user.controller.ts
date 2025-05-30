@@ -19,9 +19,10 @@ import {
 } from './dto/user.dto';
 import { JwtSystemGuardGuard } from 'src/common/guards/auth/jwt-system-auth.guard';
 import { Permission } from 'src/common/decorators/permission.decorator';
+import { PermissionGuard } from 'src/common/guards/permission/permission.guard';
 
 @ApiTags('系统用户')
-@UseGuards(JwtSystemGuardGuard)
+@UseGuards(JwtSystemGuardGuard, PermissionGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

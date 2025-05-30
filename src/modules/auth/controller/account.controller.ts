@@ -9,11 +9,11 @@ export class AccountController {
 
   @Get('menus')
   async getMenus(@CurrentUser() user) {
-    return this.authService.getMenus(user.userId);
+    return this.authService.getMenus(user.sub);
   }
 
   @Get('permissions')
   async getPermissions(@CurrentUser() user) {
-    return this.authService.getPermissions(user.userId);
+    return this.authService.getPermissions(user.sub);
   }
 }

@@ -46,12 +46,13 @@ export class AuthService {
     const payload = {
       sub: user.id,
       username: user.username,
+      roleIds: user.roles.map((role) => role.id),
     };
 
     // 生成accessToken
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('jwt.system_secret'),
-      expiresIn: '7d',
+      expiresIn: '5m',
     });
 
     // 生成refreshToken
@@ -64,7 +65,7 @@ export class AuthService {
       `accessToken:user_${user.id}`,
       accessToken,
       'EX',
-      60 * 1,
+      60 * 5 * 1,
     );
     // 存储到redis中，后面做挤兑下线功能
     await this.redisService.set(
@@ -98,11 +99,12 @@ export class AuthService {
     let payload = {
       sub: verifyData.sub,
       username: verifyData.username,
+      roleIds: verifyData.roleIds,
     };
 
     const accessToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.get('jwt.system_secret'),
-      expiresIn: '1m',
+      expiresIn: '5m',
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get('jwt.system_secret'),
@@ -114,7 +116,7 @@ export class AuthService {
       `accessToken:user_${payload.sub}`,
       accessToken,
       'EX',
-      60 * 1,
+      60 * 5 * 1,
     );
     // 存储到redis中，后面做挤兑下线功能
     await this.redisService.set(

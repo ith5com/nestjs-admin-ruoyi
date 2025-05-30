@@ -67,6 +67,7 @@ export class SysUserRepositoryService {
     return await this.sysUserRepository
       .createQueryBuilder('user')
       .where('user.username = :username', { username })
+      .leftJoinAndSelect('user.roles', 'roles')
       .addSelect('user.password')
       .getOne();
   }

@@ -35,6 +35,6 @@ export class SystemJwtStrategy extends PassportStrategy(
     if (cachedToken !== token) {
       throw new ErrorResponseException(ErrorEnum.SYSTEM_IN_OTHER_LOGIN);
     }
-    return { userId: payload.sub };
+    return payload;
   }
 }

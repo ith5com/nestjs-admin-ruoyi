@@ -11,5 +11,6 @@ import { MenuModule } from '../system/menu/menu.module';
   imports: [UserModule, RedisModule, JwtAuthModule, MenuModule],
   controllers: [AuthController, AccountController],
   providers: [AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -132,18 +132,14 @@ export class SysUserRepositoryService {
    * @returns 用户列表
    */
   public async getUserList(query: GetUserListDto) {
-    const { page = 1, pageSize = 10, username, phone, status, deptId } = query;
+    const { page = 1, pageSize = 10, username, phone, status } = query;
     const skip = (page - 1) * pageSize;
     const take = pageSize;
 
     const queryBuilder = this.sysUserRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.roles', 'roles')
-      .leftJoinAndSelect('user.dept', 'dept');
+      .leftJoinAndSelect('user.roles', 'roles');
 
-    if (deptId) {
-      queryBuilder.andWhere('dept.id = :deptId', { deptId });
-    }
     if (username) {
       queryBuilder.andWhere('user.username LIKE :username', {
         username: `%${username}%`,

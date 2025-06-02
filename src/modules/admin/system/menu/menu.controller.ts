@@ -13,14 +13,11 @@ import {
 import { MenuService } from './services/menu.service';
 import { MenuQueryDto, SysMenuDto } from './dto/menu.dto';
 import { ApiOperation } from '@nestjs/swagger';
-import { JwtSystemGuardGuard } from 'src/common/guards/auth/jwt-system-auth.guard';
 
-import { PermissionGuard } from 'src/common/guards/permission/permission.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Permission } from 'src/common/decorators/permission.decorator';
 
 @Controller('menu')
-@UseGuards(JwtSystemGuardGuard, PermissionGuard)
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 

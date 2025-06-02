@@ -1,4 +1,4 @@
-import { SysMenuEntity } from 'src/modules/system/menu/entities/menu.entity';
+import { SysMenuEntity } from 'src/modules/admin/system/menu/entities/menu.entity';
 
 export function generatorRouters(menus: SysMenuEntity[]) {
   return filterAsyncRoutes(menus, null);

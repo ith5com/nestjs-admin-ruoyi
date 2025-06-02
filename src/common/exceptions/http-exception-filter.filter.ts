@@ -2,7 +2,9 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
+  ForbiddenException,
   HttpException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -29,6 +31,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     else if (exception instanceof UnauthorizedException) {
       code = 401;
       message = ErrorEnum.ACCESS_TOKEN_EXPIRED.split(':')[1];
+    } else if (exception instanceof ForbiddenException) {
+      code = 403;
+      message = ErrorEnum.FORBIDDEN.split(':')[1];
+    } else if (exception instanceof NotFoundException) {
+      code = 404;
+      message = ErrorEnum.NOT_FOUND.split(':')[1];
     }
     // 处理其他错误
     else if (status === 500 && !(exception instanceof ErrorResponseException)) {

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { LoginDto } from '../dto/login.dto';
-import { SysUserRepositoryService } from 'src/modules/system/user/services/user-repository.service';
+import { SysUserRepositoryService } from 'src/modules/admin/system/user/services/user-repository.service';
 import { ErrorEnum } from 'src/common/enums/error.enum';
-import { HashingProvider } from 'src/modules/system/user/services/hashing.provider';
+import { HashingProvider } from 'src/modules/admin/system/user/services/hashing.provider';
 import { RedisService } from 'src/shared/redis/redis.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ErrorResponseException } from 'src/common/exceptions/error-response.exception';
-import { MenuService } from 'src/modules/system/menu/services/menu.service';
+import { MenuService } from 'src/modules/admin/system/menu/services/menu.service';
 
 @Injectable()
 export class AuthService {
